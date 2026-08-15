@@ -1,5 +1,10 @@
+import os
+
 import pytest
+from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
+
+load_dotenv()
 
 UI_BASE_URL = "https://www.saucedemo.com"
 API_BASE_URL = "https://reqres.in/api"
@@ -24,3 +29,11 @@ def page(browser):
 @pytest.fixture
 def api_base_url():
     return API_BASE_URL
+
+
+@pytest.fixture
+def api_headers():
+    return {
+        "x-api-key": os.getenv("REQRES_API_KEY"),
+        "Content-Type": "application/json",
+    }

@@ -9,3 +9,6 @@ newman-results.xml
 node_modules/
 .vscode/
 .idea/
+.env
+venv/
+
