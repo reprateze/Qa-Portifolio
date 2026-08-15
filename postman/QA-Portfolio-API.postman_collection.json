@@ -1,0 +1,137 @@
+{
+  "info": {
+    "name": "QA Portfolio API",
+    "description": "Coleção de testes de API para reqres.in, com asserts equivalentes aos testes em Python.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar usuários",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/users?page=2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
+              "pm.test('Retorna lista de dados', () => {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.data.length).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buscar usuário existente",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/users/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
+              "pm.test('ID do usuário é 2', () => {",
+              "  pm.expect(pm.response.json().data.id).to.eql(2);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buscar usuário inexistente",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/users/23"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code é 404', () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Criar usuário",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"morpheus\",\n  \"job\": \"leader\"\n}"
+        },
+        "url": "{{base_url}}/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code é 201', () => pm.response.to.have.status(201));",
+              "pm.test('Usuário criado com dados corretos', () => {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.name).to.eql('morpheus');",
+              "  pm.expect(body.job).to.eql('leader');",
+              "  pm.expect(body.id).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Atualizar usuário",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"morpheus\",\n  \"job\": \"zion resident\"\n}"
+        },
+        "url": "{{base_url}}/users/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code é 200', () => pm.response.to.have.status(200));",
+              "pm.test('Job foi atualizado', () => {",
+              "  pm.expect(pm.response.json().job).to.eql('zion resident');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deletar usuário",
+      "request": {
+        "method": "DELETE",
+        "url": "{{base_url}}/users/2"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code é 204', () => pm.response.to.have.status(204));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

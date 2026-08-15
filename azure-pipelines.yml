@@ -1,0 +1,100 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  pythonVersion: '3.11'
+
+stages:
+  - stage: Testes
+    displayName: 'Testes Automatizados'
+    jobs:
+      - job: UI_e_API_Tests
+        displayName: 'Testes de UI (Playwright) e API (pytest)'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(pythonVersion)'
+            displayName: 'Instalar Python $(pythonVersion)'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: 'Instalar dependências Python'
+
+          - script: |
+              playwright install --with-deps chromium
+            displayName: 'Instalar navegadores do Playwright'
+
+          - script: |
+              pytest --junitxml=results.xml --html=report.html --self-contained-html
+            displayName: 'Rodar testes (UI + API)'
+            continueOnError: true
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'results.xml'
+              testRunTitle: 'Testes Python (Playwright + API)'
+            displayName: 'Publicar resultados dos testes'
+
+          - task: PublishHtmlReport@1
+            condition: succeededOrFailed()
+            inputs:
+              reportDir: 'report.html'
+            displayName: 'Publicar relatório HTML (requer extensão Publish HTML)'
+            continueOnError: true
+
+          - task: PublishBuildArtifacts@1
+            condition: succeededOrFailed()
+            inputs:
+              PathtoPublish: 'report.html'
+              ArtifactName: 'test-report'
+            displayName: 'Publicar report.html como artefato'
+
+      - job: Postman_Tests
+        displayName: 'Testes de API via Postman/Newman'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Instalar Node.js'
+
+          - script: |
+              npm install -g newman newman-reporter-htmlextra
+            displayName: 'Instalar Newman'
+
+          - script: |
+              newman run postman/QA-Portfolio-API.postman_collection.json \
+                -e postman/environment.json \
+                --reporters cli,junit,htmlextra \
+                --reporter-junit-export newman-results.xml \
+                --reporter-htmlextra-export newman-report.html
+            displayName: 'Rodar coleção Postman'
+            continueOnError: true
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'newman-results.xml'
+              testRunTitle: 'Testes Postman/Newman'
+            displayName: 'Publicar resultados do Newman'
+
+          - task: PublishBuildArtifacts@1
+            condition: succeededOrFailed()
+            inputs:
+              PathtoPublish: 'newman-report.html'
+              ArtifactName: 'newman-report'
+            displayName: 'Publicar relatório do Newman como artefato'
