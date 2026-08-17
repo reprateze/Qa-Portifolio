@@ -49,15 +49,10 @@ class InventoryPage(BasePage):
     def sort_by_lowhigh(self):
         self.page.select_option(self.PRODUCT_SORT,"lohi")
 
-    def get_product_prices(self) -> float:
-        prices = self.page.locator(".inventory_item_price").all_inner_texts()
+    def get_product_prices(self) -> list[float]:
+        texts = self.page.locator(".inventory_item_price").all_inner_texts()
+        return [float(t.replace("$", "")) for t in texts]
 
-        prices = [
-        float(price.replace("$", ""))
-        for price in self.page.locator(".inventory_item_price").all_inner_texts()
-        ]
-
-        return prices
 
     def sort_products_by_price_high_to_low(self):
         self.page.select_option(self.PRODUCT_SORT, "hilo")
