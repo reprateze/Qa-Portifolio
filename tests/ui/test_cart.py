@@ -61,6 +61,6 @@ class TestCart:
     def test_go_to_checkout(self, logged_in_inventory_page, cart_page, page):
         logged_in_inventory_page.add_backpack_to_cart()
         logged_in_inventory_page.open_cart()
-        cart_page.go_to_Checkout()
+        cart_page.go_to_checkout()
 
         assert "checkout-step-one" in page.url

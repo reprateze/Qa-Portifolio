@@ -16,6 +16,8 @@ class InventoryPage(BasePage):
 
     PRODUCT_SORT = ".product_sort_container"
 
+    
+
     def is_inventory_visible(self) -> bool:
         return self.page.is_visible(self.INVENTORY_LIST)
 
@@ -53,6 +55,8 @@ class InventoryPage(BasePage):
         texts = self.page.locator(".inventory_item_price").all_inner_texts()
         return [float(t.replace("$", "")) for t in texts]
 
-
     def sort_products_by_price_high_to_low(self):
         self.page.select_option(self.PRODUCT_SORT, "hilo")
+
+    def open_product(self, product_name: str):
+        self.page.click(f"text={product_name}")
