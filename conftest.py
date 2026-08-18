@@ -8,6 +8,7 @@ from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
+from pages.product_page import ProductPage
 
 load_dotenv()
 
@@ -74,3 +75,7 @@ def logged_in_inventory_page(login_page, inventory_page):
 @pytest.fixture
 def checkout_page(page):
     return CheckoutPage(page)
+
+@pytest.fixture
+def product_page(page):
+    return ProductPage(page)

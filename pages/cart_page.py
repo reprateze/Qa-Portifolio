@@ -27,7 +27,7 @@ class CartPage(BasePage):
     def continue_shopping(self):
         self.page.click(self.CONTINUE_SHOPPING)
 
-    def go_to_Checkout(self):
+    def go_to_checkout(self):
         self.page.click(self.CHECKOUT_BUTTON)
     
     

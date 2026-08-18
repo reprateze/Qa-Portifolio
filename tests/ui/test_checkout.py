@@ -8,11 +8,11 @@ class TestCheckout:
         logged_in_inventory_page.add_backpack_to_cart()
         logged_in_inventory_page.open_cart()
 
-        cart_page.go_to_Checkout()
+        cart_page.go_to_checkout()
 
         checkout_page.fill_checkout_info("Jon", "Morgan", "12345")
         checkout_page.continue_checkout()
-        checkout_page.finish()
+        checkout_page.finish_checkout()
 
         assert checkout_page.is_order_complete()
         assert checkout_page.get_message() == "Thank you for your order!"
@@ -21,7 +21,7 @@ class TestCheckout:
         logged_in_inventory_page.add_backpack_to_cart()
         logged_in_inventory_page.open_cart()
 
-        cart_page.go_to_Checkout()
+        cart_page.go_to_checkout()
         checkout_page.fill_checkout_info("Jon", "Morgan", "12345")
         checkout_page.cancel_checkout()
 
@@ -31,7 +31,7 @@ class TestCheckout:
         logged_in_inventory_page.add_backpack_to_cart()
         logged_in_inventory_page.open_cart()
         
-        cart_page.go_to_Checkout()
+        cart_page.go_to_checkout()
         checkout_page.fill_checkout_info("", "Morgan", "12345")
         checkout_page.continue_checkout()
 
@@ -45,7 +45,7 @@ class TestCheckout:
         checkout_page.fill_checkout_info("John", "", "12345")
         checkout_page.continue_checkout()
 
-        assert "Last Name is required" in checkout_page.get_error_message()
+        assert "Error: Last Name is required" in checkout_page.get_error_message()
 
     def test_checkout_sem_postal_code(self, logged_in_inventory_page, cart_page, checkout_page):
         logged_in_inventory_page.add_backpack_to_cart()
@@ -55,7 +55,7 @@ class TestCheckout:
         checkout_page.fill_checkout_info("John", "Doe", "")
         checkout_page.continue_checkout()
 
-        assert "Postal Code is required" in checkout_page.get_error_message()
+        assert "Error: Postal Code is required" in checkout_page.get_error_message()
     
     def test_checkout_resumo_valores(self, logged_in_inventory_page, cart_page, checkout_page):
         logged_in_inventory_page.add_backpack_to_cart()
