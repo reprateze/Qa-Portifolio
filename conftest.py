@@ -7,6 +7,7 @@ from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
 
 load_dotenv()
 
@@ -69,3 +70,7 @@ def cart_page(page):
 def logged_in_inventory_page(login_page, inventory_page):
     login_page.login(STANDARD_USER, STANDARD_PASSWORD)
     return inventory_page
+
+@pytest.fixture
+def checkout_page(page):
+    return CheckoutPage(page)
