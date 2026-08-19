@@ -15,7 +15,7 @@ load_dotenv()
 UI_BASE_URL = "https://www.saucedemo.com"
 API_BASE_URL = "https://reqres.in/api"
 
-STANDARD_USER = "standard_user"
+STANDARD_USER = "problem_user"
 STANDARD_PASSWORD = "secret_sauce"
 
 
@@ -79,3 +79,21 @@ def checkout_page(page):
 @pytest.fixture
 def product_page(page):
     return ProductPage(page)
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        page = item.funcargs.get("page")
+        if page is not None:
+            os.makedirs("reports/screenshots", exist_ok=True)
+            screenshot_path = f"reports/screenshots/{item.name}.png"
+            page.screenshot(path=screenshot_path)
+
+            if "pytest_html" in item.config.pluginmanager.list_name_plugin():
+                extra = getattr(report, "extra", [])
+                from pytest_html import extras
+                extra.append(extras.image(screenshot_path))
+                report.extra = extra
